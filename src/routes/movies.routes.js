@@ -5,6 +5,8 @@ const router = Router()
 
 router.get('/', movvieController.getAllMovies)
 
+router.get('/:id', movvieController.getMovie)
+
 router.post('/', movvieController.createMovie)
 
 router.put('/:id', movvieController.updateMovie);

@@ -4,7 +4,6 @@ const getAllMovies = (req, res, next) => {
     try {
         pool.query('SELECT COUNT(*) as total_movie FROM movie; SELECT * FROM movie;', (err, result) => {
             if (err) {
-                console.error('Error executing SQL query', err);
                 res.status(500).json({ error: 'Internal server error' });
             } else {
                 const totalMovies = result[0].rows[0].total_movie;
@@ -20,8 +19,24 @@ const getAllMovies = (req, res, next) => {
             }
         });
     } catch (error) {
-        console.log(error)
-        res.status(404).json({ error })
+        res.status(500).json({ errorMessage: 'Internal server error', error });
+    }
+}
+
+const getMovie = (req, res) => {
+    try {
+        const movieId = req.params.id
+        const query = "SELECT * FROM movie WHERE id = $1"
+        const values = [movieId]
+        pool.query(query, values, (err, result) => {
+            if (err) {
+                res.status(400).json({ errorMessage: err.message, errorName: err.name, error: err });
+            } else {
+                res.status(201).json({ message: 'User created successfully', result: result.rows });
+            }
+        })
+    } catch (error) {
+        res.status(500).json({ errorMessage: 'Internal server error', error });
     }
 }
 
@@ -47,8 +62,7 @@ const createMovie = (req, res) => {
             }
         });
     } catch (error) {
-        console.log(error)
-        res.status(400).json(error)
+        res.status(500).json({ errorMessage: 'Internal server error', error });
     }
 }
 
@@ -88,13 +102,13 @@ const deleteMovie = (req, res) => {
             }
         });
     } catch (error) {
-        console.log(error)
-        res.status(400).json(error)
+        res.status(500).json({ errorMessage: 'Internal server error', error });
     }
 }
 
 module.exports = {
     getAllMovies,
+    getMovie,
     createMovie,
     updateMovie,
     deleteMovie
