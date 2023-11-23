@@ -72,7 +72,7 @@ const updateMovie = (req, res) => {
             }
         });
     } catch (error) {
-
+        res.status(500).json({ errorMessage: 'Internal server error', error });
     }
 }
 
